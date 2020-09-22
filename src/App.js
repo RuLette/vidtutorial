@@ -1,23 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
+  const [videoTutorials, setvideoTutorials] = useState(null);
+
+  useEffect(() => {
+    // GET request using fetch inside useEffect React hook
+    fetch(
+      "https://lingumi-take-home-test-server.herokuapp.com/videoTutorials",
+      { mode: "no-cors" }
+    )
+      .then((response) => console.log(response))
+      // .then((data) => console.log(data, "data"));
+      .then((data) => setvideoTutorials(data.total));
+  }, []);
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {/* TO DO: replace this logo */}
+        <h3>Video tutorial</h3>
       </header>
     </div>
   );
