@@ -10,9 +10,8 @@ function App() {
     const fetchData = async () => {
       setIsError(false);
       setIsLoading(true);
-
       try {
-        const result = await axios.get("/videotutorials").then((res) => {
+        await axios.get("/videotutorials").then((res) => {
           console.log(res, "result");
           setvidData(res.data);
         });
@@ -25,6 +24,16 @@ function App() {
     fetchData();
   }, []);
 
+  // `1.  Inputs a teacher, gets all video tutorials by a teacher`;
+
+  function getTutorialsForTeacher(teacherData) {
+    console.log(
+      // vidData.map((item) => item.forEach((element) => console.log(element)))
+      vidData.find((element) => console.log(element.teacherId === teacherData))
+      // vidData.forEach((element) => console.log(element))
+    );
+  }
+
   return (
     <Fragment>
       <h1>Vid Tutorials</h1>
@@ -34,10 +43,14 @@ function App() {
       ) : (
         <ul>
           {/* <p>H{JSON.stringify(vidData)}</p> */}
-
           {vidData.map((item) => (
             <li key={item.id}>
-              <a href={item.vidData}>{item.teacherName}</a>
+              <a
+                href={item.vidData}
+                onClick={getTutorialsForTeacher(item.teacherName)}
+              >
+                {item.teacherName}
+              </a>
             </li>
           ))}
         </ul>
