@@ -1,28 +1,38 @@
-import React, { useState, useEffect } from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import React, { Fragment, useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
-  const [videoTutorials, setvideoTutorials] = useState(null);
+  const [data, setData] = useState({ hits: [] });
+  const [vidData, setvidData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // GET request using fetch inside useEffect React hook
-    fetch(
-      "https://lingumi-take-home-test-server.herokuapp.com/videoTutorials",
-      { mode: "no-cors" }
-    )
-      .then((response) => console.log(response))
-      // .then((data) => console.log(data, "data"));
-      .then((data) => setvideoTutorials(data.total));
-  }, []);
+    const fetchData = async () => {
+      setIsLoading(true);
+      const result = await axios.get("/videotutorials").then((res) => {
+        console.log(res);
+        setData(res.data);
+        setIsLoading(false);
+      });
+    };
+    fetchData();
+  }, [vidData]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {/* TO DO: replace this logo */}
-        <h3>Video tutorial</h3>
-      </header>
-    </div>
+    <Fragment>
+      <h1>Vid Tutorials</h1>
+      {/* {isLoading ? (
+        <div>Loading ...</div>
+      ) : (
+        <ul>
+          {data.hits.map((item) => (
+            <li key={item.objectID}>
+              <a href={item.vidData}>{item.title}</a>
+            </li>
+          ))}
+        </ul>
+      )} */}
+    </Fragment>
   );
 }
 
