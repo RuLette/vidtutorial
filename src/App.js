@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
 import axios from "axios";
-
 function App() {
   const [vidData, setvidData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -12,51 +11,78 @@ function App() {
       setIsLoading(true);
       try {
         await axios.get("/videotutorials").then((res) => {
-          console.log(res, "result");
+          console.log(res.data, "result data");
           setvidData(res.data);
         });
       } catch (error) {
-        console.log(error, "error");
         setIsError(true);
       }
       setIsLoading(false);
     };
     fetchData();
   }, []);
-
-  // `1.  Inputs a teacher, gets all video tutorials by a teacher`;
-
-  function getTutorialsForTeacher(teacherData) {
-    console.log(
-      // vidData.map((item) => item.forEach((element) => console.log(element)))
-      vidData.find((element) => console.log(element.teacherId === teacherData))
-      // vidData.forEach((element) => console.log(element))
+  // Inputs a teacher, gets all video tutorials by a teacher;
+  function getTutorialsForTeacher(inputTeacher) {
+    return vidData.filter(
+      (tutorial) =>
+        tutorial.teacherName.toLowerCase() === inputTeacher ||
+        tutorial.teacherId === inputTeacher
     );
   }
-
+  // Gets top 20 tutorials
+  function getTopRatedTutorials() {
+    vidData
+      .sort(function (a, b) {
+        return b.averageUserRating - a.averageUserRating;
+      })
+      .slice(0, 20);
+  }
+  // Inputs a collection of tags, outputs the top 20 rated
+  function getTopRatedTutorialsForTags(inputTags) {
+    const hasTags = vidData.filter((tutorial) =>
+      tutorial.tags.includes(inputTags)
+    );
+    hasTags
+      .sort(function (a, b) {
+        return b.averageUserRating - a.averageUserRating;
+      })
+      .slice(0, 20);
+  }
+  // Inputs a string, entered by the user, outputs a collection of tutorials relevant to string
+  function searchForTutorials(inputString) {
+    function filterByValue(array, value) {
+      return array.filter(
+        (data) =>
+          JSON.stringify(data).toLowerCase().indexOf(value.toLowerCase()) !== -1
+      );
+    }
+    return filterByValue(vidData, inputString);
+  }
   return (
     <Fragment>
       <h1>Vid Tutorials</h1>
       {isError && <div>Sorry, there has been an error on this app ...</div>}
       {isLoading ? (
-        <div>Loading ...</div>
+        <div>Loading, please wait ...</div>
       ) : (
         <ul>
-          {/* <p>H{JSON.stringify(vidData)}</p> */}
-          {vidData.map((item) => (
+          <li>
+            {JSON.stringify(
+              getTutorialsForTeacher("5a48d52f-7559-4540-bb6c-97aade16e31d")
+            )}
+          </li>
+          {/* <a href onClick={searchForTutorials("test")}>
+            Test
+          </a> */}
+
+          {/* {getTutorialsForTeacher("Katy").map((item) => (
             <li key={item.id}>
-              <a
-                href={item.vidData}
-                onClick={getTutorialsForTeacher(item.teacherName)}
-              >
-                {item.teacherName}
-              </a>
+              <ul>content</ul>
             </li>
-          ))}
+          ))} */}
         </ul>
       )}
     </Fragment>
   );
 }
-
 export default App;
